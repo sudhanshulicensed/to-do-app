@@ -24,7 +24,7 @@
               <p>Time: {{task.myHours}}:{{task.myMinutes}}</p>
             </div>
           </div>
-          <div @click="editTask" class="edit"><p>Edit</p></div>
+          <div @click="editTask(index)" class="edit"><p>Edit</p></div>
           <div @click="deleteTask(index)" class="delete"><p>Delete</p></div>
         </li>
       </div>
@@ -61,10 +61,13 @@ export default {
     },
 
     editTask(index) {
+      console.log(index, this.myData)
       this.show = !this.show;
       this.editIndex = index;
       this.isEdit = true;
       this.content = this.myData[index].conObj;
+      console.log(this.myData[index].conObj)
+      console.log(this.content);
     },
 
     deleteTask(index){
