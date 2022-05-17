@@ -4,8 +4,8 @@
       <div class="header">
         <div class="title">To-Do Application</div>
         <div class="add-todo">
-          <img @click="show = !show" src="./assets/Groupadd-btn.svg" alt="Adding Task to ToDo">
-          <AddToDo v-show="show" @myTask="addTask"/>
+          <img @click="toggleModal"  src="./assets/Groupadd-btn.svg" alt="Adding Task to ToDo">
+          <AddToDo class="form-modal" @myTaskEdit="myTaskEdit" @close="toggleModal" :show="show" :editObjc="editedObj" @myTask="addTask"/>
         </div>
       </div>
       <div class="main">
@@ -24,7 +24,7 @@
               <p>Time: {{task.myHours}}:{{task.myMinutes}}</p>
             </div>
           </div>
-          <div @click="editTask(index)" class="edit"><p>Edit</p></div>
+          <div  @click="editTask(index)" class="edit"><p>Edit</p></div>
           <div @click="deleteTask(index)" class="delete"><p>Delete</p></div>
         </li>
       </div>
@@ -43,20 +43,20 @@ export default {
   },
   data() {
     return {
-      content: "",
       isEdit: false,
       editIndex: null,
       time: "",
       date: new Date(),
       show: false,
       myData: [],
-
+      editedObj: null,
+      editEmitIndex: null,
     }
   },
   methods: {
     addTask(obj) {
       this.myData.push({conObj: obj.content, myDate: this.date.getDate(), myMonth: this.date.getMonth(), myHours: this.date.getHours(), myMinutes: this.date.getMinutes()});
-      this.show = !this.show;
+      this.show = true;
       console.log(this.date.getDate(), this.date.getHours(), this.date.getMinutes());
     },
 
@@ -65,13 +65,24 @@ export default {
       this.show = !this.show;
       this.editIndex = index;
       this.isEdit = true;
-      this.content = this.myData[index].conObj;
-      console.log(this.myData[index].conObj)
-      console.log(this.content);
+      this.editedObj = this.myData[index].conObj;      
+    },
+
+    myTaskEdit(obj) {
+      console.log(obj);
+
+      this.myData[this.editIndex].conObj = obj.content;
+      console.log(this.myData[this.editIndex])
+      console.log(this.editedObj)
     },
 
     deleteTask(index){
       this.myData.splice(index, 1);
+    },
+
+    toggleModal() {
+      this.show = !this.show;
+      console.log(this.show);
     }
   }
 }
@@ -124,6 +135,11 @@ li{
 .check{
   display: flex;
   align-items: center;
+}
+
+.form-modal{
+  top: 0;
+  left: 0;
 }
 
 </style>
