@@ -1,16 +1,20 @@
 <template>
-    <div class="backdrop" v-if="show">
+<div class="whole">
+    
+    <div class="overlay" v-if="show" >
         <div class="content">
                 <form v-on:submit.prevent>
-                    {{ editObjc }}
                     <label for="context">What are you up for?</label>
                     <input v-model="subject.content" id="context" type="text">
                     <button v-if="!editObjc" @click="addMyTask">Add Task</button>
                     <button v-else @click="editMyTask">Edit Task</button>
                 </form>
                 <button @click="closeModal">Cancel</button>
-        </div>        
+        </div> 
     </div>
+</div>
+               
+    
 </template>
 
 <script>
@@ -55,8 +59,8 @@ export default {
 
         closeModal() {
             this.$emit("close");
-        }
-    }
+        },
+    },
 }
 </script>
 
@@ -72,11 +76,14 @@ export default {
         border-radius: 10px;
     }
 
-    .backdrop{
-        position: fixed;
-        padding: 100px;
-        background: rgba(0, 0, 0, 0.6);
-        width: 100vh;
-        height: 100vh;
+    .overlay{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+        z-index: 5;
     }
 </style>

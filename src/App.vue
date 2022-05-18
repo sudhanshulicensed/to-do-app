@@ -1,8 +1,11 @@
 <template>
   <div id="app">
-    <div class="container">
+    <div class="container" @click="closeModal">
       <div class="header">
         <div class="title">To-Do Application</div>
+        <div class="state">
+              <p :class="{ redText: isActive }">{{ state }}</p>
+            </div>
         <div class="add-todo">
           <img @click="toggleModal"  src="./assets/Groupadd-btn.svg" alt="Adding Task to ToDo">
           <AddToDo class="form-modal" @myTaskEdit="myTaskEdit" @close="toggleModal" :show="show" :editObjc="editedObj" @myTask="addTask"/>
@@ -51,11 +54,27 @@ export default {
       myData: [],
       editedObj: null,
       editEmitIndex: null,
+      state: null,
+      setError: null,
+      isActive: true,
     }
   },
   methods: {
+    error(){
+      this.state = "";
+    },
+
+    stopError(){
+      clearInterval(this.error);
+    },
     addTask(obj) {
-      this.myData.push({conObj: obj.content, myDate: this.date.getDate(), myMonth: this.date.getMonth(), myHours: this.date.getHours(), myMinutes: this.date.getMinutes()});
+      if(obj.content !== "") {
+        this.myData.push({conObj: obj.content, myDate: this.date.getDate(), myMonth: this.date.getMonth(), myHours: this.date.getHours(), myMinutes: this.date.getMinutes()});
+      } else {
+          this.state="Input Can't  be empty";
+          this.setError = setInterval( this.error,1500);
+          this.stopError();
+      }      
       this.show = true;
       console.log(this.date.getDate(), this.date.getHours(), this.date.getMinutes());
     },
@@ -64,16 +83,15 @@ export default {
       console.log(index, this.myData)
       this.show = !this.show;
       this.editIndex = index;
-      this.isEdit = true;
       this.editedObj = this.myData[index].conObj;      
+    },
+    closeModal(){
+        console.log(this.show);
     },
 
     myTaskEdit(obj) {
-      console.log(obj);
-
       this.myData[this.editIndex].conObj = obj.content;
-      console.log(this.myData[this.editIndex])
-      console.log(this.editedObj)
+      this.editedObj = null;
     },
 
     deleteTask(index){
@@ -140,6 +158,10 @@ li{
 .form-modal{
   top: 0;
   left: 0;
+}
+
+.redText{
+  color: red;
 }
 
 </style>
