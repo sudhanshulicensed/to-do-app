@@ -1,28 +1,167 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="container" @click="closeModal">
+      <div class="header">
+        <div class="title">To-Do Application</div>
+        <div class="state">
+              <p :class="{ redText: isActive }">{{ state }}</p>
+            </div>
+        <div class="add-todo">
+          <img @click="toggleModal"  src="./assets/Groupadd-btn.svg" alt="Adding Task to ToDo">
+          <AddToDo class="form-modal" @myTaskEdit="myTaskEdit" @close="toggleModal" :show="show" :editObjc="editedObj" @myTask="addTask"/>
+        </div>
+      </div>
+      <div class="main">
+        <li v-for="(task, index) in myData" :key="index">
+          <div class="check">
+            <input type="checkbox">
+          </div>
+          <div class="content">
+            <div class="obj">
+              <p>{{task.conObj}}</p>
+              </div>
+            <div class="date-month">
+              <p>{{task.myDate}}/{{task.myMonth +1}}</p>
+            </div>
+            <div class="time">
+              <p>Time: {{task.myHours}}:{{task.myMinutes}}</p>
+            </div>
+          </div>
+          <div  @click="editTask(index)" class="edit"><p>Edit</p></div>
+          <div @click="deleteTask(index)" class="delete"><p>Delete</p></div>
+        </li>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import AddToDo from "./components/AddToDo.vue"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    AddToDo,
+  },
+  data() {
+    return {
+      isEdit: false,
+      editIndex: null,
+      time: "",
+      date: new Date(),
+      show: false,
+      myData: [],
+      editedObj: null,
+      editEmitIndex: null,
+      state: null,
+      setError: null,
+      isActive: true,
+    }
+  },
+  methods: {
+    error(){
+      this.state = "";
+    },
+
+    stopError(){
+      clearInterval(this.error);
+    },
+    addTask(obj) {
+      if(obj.content !== "") {
+        this.myData.push({conObj: obj.content, myDate: this.date.getDate(), myMonth: this.date.getMonth(), myHours: this.date.getHours(), myMinutes: this.date.getMinutes()});
+      } else {
+          this.state="Input Can't  be empty";
+          this.setError = setInterval( this.error,1500);
+          this.stopError();
+      }      
+      this.show = true;
+      console.log(this.date.getDate(), this.date.getHours(), this.date.getMinutes());
+    },
+
+    editTask(index) {
+      console.log(index, this.myData)
+      this.show = !this.show;
+      this.editIndex = index;
+      this.editedObj = this.myData[index].conObj;      
+    },
+    closeModal(){
+        console.log(this.show);
+    },
+
+    myTaskEdit(obj) {
+      this.myData[this.editIndex].conObj = obj.content;
+      this.editedObj = null;
+    },
+
+    deleteTask(index){
+      this.myData.splice(index, 1);
+    },
+
+    toggleModal() {
+      this.show = !this.show;
+      console.log(this.show);
+    }
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+
+.container{
+  display: flex;
+  flex-direction: column;
+}
+
+.header{
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-todo img{
+  display: flex;
+  align-items: center;
+}
+
+.main{
+  display: flex;
+  flex-direction: column;
+}
+
+li{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.content{
+  display: flex;
+  column-gap: 5px;
+  row-gap: 5px;
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+.check{
+  display: flex;
+  align-items: center;
+}
+
+.form-modal{
+  top: 0;
+  left: 0;
+}
+
+.redText{
+  color: red;
+}
+
 </style>
